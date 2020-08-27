@@ -1,0 +1,3 @@
+rootProject.name = 'kstreams-ksqldb-demo-parent'
+include(':data-generator')
+include(':kstreams-demo')
