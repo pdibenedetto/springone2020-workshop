@@ -12,7 +12,7 @@ Viktor Gamov <viktor@confluent.io>, © 2020 Confluent, Inc.
 :toc: auto
 :toc-placement: auto
 :toc-position: auto
-:toc-title: Table of content
+:toc-title: Table of contents
 :toclevels: 3
 :idprefix:
 :idseparator: -
@@ -32,10 +32,10 @@ toc::[]
 Before you proceed, make sure you have the following toolset installed on your computer:
 
 * Sign up for https://confluent.cloud[Confluent Cloud]
-** you should have your login and password handy.
+** you should have your login and password handy after you sign up for Confluent Cloud.
 +
 The `ccloud` init script will ask login.
-** Install https://docs.confluent.io/current/cli/installing.html[Confluent Cloud CLI]
+** Install https://docs.confluent.io/current/cloud/cli/install.html[Confluent Cloud CLI]
 * Docker
 ** https://docs.docker.com/docker-for-mac/install/[MacOS]
 ** Docker Compose (installed with Docker Desktop and Docker Toolbox)
@@ -43,15 +43,17 @@ The `ccloud` init script will ask login.
 * Java
 ** https://jdk.dev[Java 8 (or later)]
 * Your favorite Java IDE  
-** I recommend https://www.jetbrains.com/idea/[IntelJ IDEA]
+** I recommend https://www.jetbrains.com/idea/[IntelliJ IDEA]
+* As another prerequisite, clone following repo 
++
 
 [source,shell script]
 ----
 $ git clone https://github.com/gAmUssA/springone2020-workshop    #<1>
-$ cd springone2020-workshop                                      # <2>
+$ cd springone2020-workshop                                      #<2>
 ----
 <1> Clone the repository
-<2> Access the workshop folder
+<2> Change directory of the workshop folder
 
 == 0️⃣ Provisioning Confluent Cloud cluster
 
@@ -72,13 +74,10 @@ Set Kafka cluster "lkc-oz98y" as the active cluster for environment "env-nx57d".
 Waiting up to 720 seconds for Confluent Cloud cluster to be ready and for credentials to propagate
 .....
 Sleeping an additional 80 seconds to ensure propagation of all metadata
-
-$ source delta_configs/env.delta  #<3>
 ----
 <1> Login to your Confluent Cloud account.
 <2> The CCloud Stack script will ask you to login to your CCloud account.
 It will automatically provision Kafka and ksqlDB cluster.
-<3> export Kafka connection information as environment variables.
 
 Among other things, this script generates a config that we need to pass to docker-compose start command in order to connector container connect to cloud Kafka cluster. 
 
@@ -120,8 +119,9 @@ You can also start the application from CLI by building it and running it:
 [source,shell script]
 ----
 $ source ./scripts/cclou/delta_configs/env.delta
-$ ./mvnw -f data-generator/pom.xml verify                 #<1>
-$ java -jar data-generator/target/data-generator.jar      #<2>
+$ cd ../..
+$ ./gradlew :data-generator:build                        #<1>
+$ java -jar data-generator/build/libs/data-generator-0.0.1-SNAPSHOT.jar      #<2>
 ----
 <1> To build
 <2> To run after build
