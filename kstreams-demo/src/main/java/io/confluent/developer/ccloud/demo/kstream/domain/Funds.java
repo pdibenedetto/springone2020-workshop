@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Funds {
 
-  private final String account;
-  private final BigDecimal balance;
-  
+  String account;
+  BigDecimal balance;
+
 }

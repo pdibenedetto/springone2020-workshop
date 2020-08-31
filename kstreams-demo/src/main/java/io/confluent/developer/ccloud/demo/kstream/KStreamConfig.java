@@ -6,9 +6,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
-import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.state.Stores;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -74,29 +72,22 @@ public class KStreamConfig {
     return topology;
   }
 
-
   protected void defineStreams(StreamsBuilder streamsBuilder) {
+
     KStream<String, Transaction> transactionStream =
-        streamsBuilder.stream(transactionRequestConfiguration.getName(),
-                              Consumed.with(
-                                  Serdes.String(),
-                                  new JsonSerde<>(Transaction.class, OBJECT_MAPPER)));
+        streamsBuilder.stream(transactionRequestConfiguration.getName());
 
     final String storeName = fundsStoreConfig.getName();
     KStream<String, TransactionResult> resultStream = transactionStream
         .transformValues(() -> new TransactionTransformer(storeName), storeName);
 
-    final Produced<String, TransactionResult>
-        producedWith =
-        Produced.with(Serdes.String(), new JsonSerde<>(TransactionResult.class));
-
     resultStream
         .filter(this::success)
-        .to(transactionSuccessConfiguration.getName(), producedWith);
+        .to(transactionSuccessConfiguration.getName());
 
     resultStream
         .filterNot(this::success)
-        .to(transactionFailedConfiguration.getName(), producedWith);
+        .to(transactionFailedConfiguration.getName());
   }
 
   private boolean success(String account, TransactionResult result) {

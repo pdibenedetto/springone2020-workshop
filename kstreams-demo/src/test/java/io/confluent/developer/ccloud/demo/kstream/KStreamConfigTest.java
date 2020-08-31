@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.TestInputTopic;
 import org.apache.kafka.streams.TestOutputTopic;
 import org.apache.kafka.streams.Topology;
@@ -14,6 +13,7 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
 import java.math.BigDecimal;
@@ -30,6 +30,10 @@ import io.confluent.developer.ccloud.demo.kstream.topic.TransactionFailedTopicCo
 import io.confluent.developer.ccloud.demo.kstream.topic.TransactionRequestTopicConfig;
 import io.confluent.developer.ccloud.demo.kstream.topic.TransactionSuccessTopicConfig;
 
+import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
+import static org.apache.kafka.streams.StreamsConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.streams.StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG;
+import static org.apache.kafka.streams.StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -80,8 +84,13 @@ public class KStreamConfigTest {
     // ttd
     final Properties properties = new Properties();
     final Map<String, String> config = Map.of(
-        StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:8080",
-        StreamsConfig.APPLICATION_ID_CONFIG, "mytest");
+        BOOTSTRAP_SERVERS_CONFIG, "localhost:8080",
+        APPLICATION_ID_CONFIG, "mytest",
+        DEFAULT_KEY_SERDE_CLASS_CONFIG, "org.apache.kafka.common.serialization.Serdes$StringSerde",
+        DEFAULT_VALUE_SERDE_CLASS_CONFIG, "org.springframework.kafka.support.serializer.JsonSerde",
+        JsonDeserializer.TYPE_MAPPINGS, "transaction:io.confluent.developer.ccloud.demo.kstream.domain.Transaction",
+        JsonDeserializer.TRUSTED_PACKAGES, "*"
+    );
     properties.putAll(config);
     testDriver = new TopologyTestDriver(topology, properties);
 
